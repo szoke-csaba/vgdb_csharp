@@ -28,7 +28,7 @@ public class Game
 
     public double AverageRating()
     {
-        return Votes.Average(vote => vote.Rating);
+        return Votes?.Average(vote => vote?.Rating) ?? 0;
     }
 
     public int MostVotesForARating()

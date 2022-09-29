@@ -52,14 +52,15 @@ public class GameController : ControllerBase
         };
 
         var gameList = await PaginatedList<Game>.CreateAsync(games.AsNoTracking(), gameDTO.Page, _pageSize);
+        var pagination = new PaginationDto(gameList.CurrentPage, gameList.TotalPages, gameList.PageSize, gameList.TotalCount,
+                gameList.PageItemsFrom, gameList.PageItemsTo, gameList.HasPrevious, gameList.HasNext, gameList.PreviousPage, gameList.NextPage);
 
         var response = new Dictionary<string, object>()
         {
             { "games", gameList },
             { "search", gameDTO.Search },
             { "sort", gameDTO.Sort },
-            { "pagination", new PaginationDto(gameList.CurrentPage, gameList.TotalPages, gameList.PageSize, gameList.TotalCount,
-                gameList.PageItemsFrom, gameList.PageItemsTo, gameList.HasPrevious, gameList.HasNext, gameList.PreviousPage, gameList.NextPage) },
+            { "pagination", pagination },
         };
 
         return Ok(response);
@@ -96,9 +97,17 @@ public class GameController : ControllerBase
             );
         }
 
+        var ratings = new Dictionary<string, object>()
+        {
+            { "numberOfVotesPerRating", game.NumberOfVotesPerRating() },
+            { "averageRating", game.AverageRating() },
+            { "mostVotesForARating", game.MostVotesForARating() }
+        };
+
         var response = new Dictionary<string, object>
         {
-            { "game", game }
+            { "game", game },
+            { "voteStats", ratings }
         };
 
         var username = User.FindFirstValue(ClaimTypes.NameIdentifier);

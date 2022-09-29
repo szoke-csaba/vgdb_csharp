@@ -10,7 +10,7 @@ public class ApplicationUser : IdentityUser
 
     public int GameRating(int gameId)
     {
-        return Ratings?.FirstOrDefault(vote => vote.Game.Id == gameId)?.Rating ?? 0;
+        return Ratings?.FirstOrDefault(vote => vote.Game?.Id == gameId)?.Rating ?? 0;
     }
 
     public int GameUserListType(int gameId)

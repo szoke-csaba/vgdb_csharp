@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Game } from '../../_models/game/game.model';
+import { VoteStats } from '../../_models/game/voteStats.model';
 import { User } from '../../_models/user/user.model';
 import { UserListDto } from '../../_models/userListDto.model';
 import { VoteDto } from '../../_models/voteDto.model';
@@ -22,6 +23,7 @@ export class GameSingleComponent implements OnInit {
   userRating?: string ;
   userListType?: string;
   user: User | null = null;
+  voteStats?: VoteStats;
 
   constructor(private gameService: GameService, private activatedRoute: ActivatedRoute, private authService: AuthenticationService,
     private voteService: VoteService, private userListService: UserListService, private toastService: ToastService) {
@@ -38,6 +40,7 @@ export class GameSingleComponent implements OnInit {
           this.game = result.game;
           this.userRating = result.userRating;
           this.userListType = result.userListType;
+          this.voteStats = result.voteStats;
         }, error => console.error(error));
       });
   }
@@ -73,5 +76,17 @@ export class GameSingleComponent implements OnInit {
   private getUser(): void {
     const user = this.authService.getUser();
     this.user = user ? user : null;
+  }
+
+  public ratingPercentage(rating: number) {
+    if (this.voteStats) {
+      return rating / this.voteStats.mostVotesForARating * 100;
+    }
+
+    return 0;
+  }
+
+  public returnZero() {
+    return 0;
   }
 }

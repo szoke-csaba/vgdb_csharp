@@ -92,5 +92,19 @@
       </div>
     </div>
   </div>
+  <div *ngIf="game.votes.length && voteStats && voteStats.numberOfVotesPerRating" class="text-center mt-14">
+    <div class="flex flex-col-reverse m-auto w-96">
+      <div class="flex items-center" *ngFor="let item of voteStats.numberOfVotesPerRating | keyvalue: returnZero">
+        <span class="w-6">{{ item.key }}</span>
+        <div class="mx-4 w-2/4 h-4 bg-gray-200 dark:bg-gray-700 mx-3 flex-1">
+          <div class="h-4 bg-slate-500" style="width: {{ ratingPercentage(item.value) }}%"></div>
+        </div>
+        <span class="ml-auto">{{ item.value }}</span>
+      </div>
+    </div>
+    <div class="mt-3">
+      {{ game.votes.length }} votes total, average {{ voteStats.averageRating | number: '1.2-2' }}
+    </div>
+  </div>
 </div>
 <app-toast></app-toast>

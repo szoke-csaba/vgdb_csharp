@@ -7,4 +7,5 @@ export interface Game {
   developers: any[];
   publishers: any[];
   platforms: any[];
+  votes: any[];
 }
