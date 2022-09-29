@@ -1,0 +1,96 @@
+<div class="flex justify-center" role="status" *ngIf="!game">
+  <svg aria-hidden="true" class="mr-2 w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"></path>
+    <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"></path>
+  </svg>
+  <span class="sr-only">Loading...</span>
+</div>
+<div *ngIf="game">
+  <div class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5">
+    <div class="xl:col-start-2 h-80 card bg-base-100 shadow-xl bg-cover bg-no-repeat bg-center rounded"
+         style="background-image: url(https://placeimg.com/400/225/nature)">
+    </div>
+    <div class="lg:col-span-2 shadow-xl h-fit border border-x-0 border-t-0">
+      <div class="grid grid-cols-3 border p-3 border-b-0">
+        <div>Title</div>
+        <div class="col-span-2">{{ game.title }}</div>
+      </div>
+      <div class="grid grid-cols-3 border p-3 border-b-0" *ngIf="game.releaseDate">
+        <div>Release date</div>
+        <div class="col-span-2">{{ game.releaseDate | date:'dd MMM, yyyy' }}</div>
+      </div>
+      <div class="grid grid-cols-3 border p-3 border-b-0" *ngIf="game.tags.length">
+        <div>Tags</div>
+        <div class="col-span-2">
+          <span *ngFor="let tag of game.tags; let isLast = last">
+            {{ tag.name }}{{isLast ? '' : ', '}}
+          </span>
+        </div>
+      </div>
+      <div class="grid grid-cols-3 border p-3 border-b-0" *ngIf="game.genres.length">
+        <div>Genres</div>
+        <div class="col-span-2">
+          <span *ngFor="let genre of game.genres; let isLast = last">
+            {{ genre.name }}{{isLast ? '' : ', '}}
+          </span>
+        </div>
+      </div>
+      <div class="grid grid-cols-3 border p-3 border-b-0" *ngIf="game.developers.length">
+        <div>Developers</div>
+        <div class="col-span-2">
+          <span *ngFor="let developer of game.developers; let isLast = last">
+            {{ developer.name }}{{isLast ? '' : ', '}}
+          </span>
+        </div>
+      </div>
+      <div class="grid grid-cols-3 border p-3 border-b-0" *ngIf="game.publishers.length">
+        <div>Publishers</div>
+        <div class="col-span-2">
+          <span *ngFor="let publisher of game.publishers; let isLast = last">
+            {{ publisher.name }}{{isLast ? '' : ', '}}
+          </span>
+        </div>
+      </div>
+      <div class="grid grid-cols-3 border p-3 border-b-0" *ngIf="game.platforms.length">
+        <div>Platforms</div>
+        <div class="col-span-2">
+          <span *ngFor="let platform of game.platforms; let isLast = last">
+            {{ platform.name }}{{isLast ? '' : ', '}}
+          </span>
+        </div>
+      </div>
+      <div class="grid grid-cols-3 border p-3 border-b-0 items-center" *ngIf="user">
+        <div>My vote</div>
+        <div class="col-span-2">
+          <select (change)="voteChanged($event)" [value]="userRating" class="w-20 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+            <option value="0">Vote</option>
+            <option value="10">10</option>
+            <option value="9">9</option>
+            <option value="8">8</option>
+            <option value="7">7</option>
+            <option value="6">6</option>
+            <option value="5">5</option>
+            <option value="4">4</option>
+            <option value="3">3</option>
+            <option value="2">2</option>
+            <option value="1">1</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid grid-cols-3 border p-3 border-b-0 items-center" *ngIf="user">
+        <div>My lists</div>
+        <div class="col-span-2">
+          <select (change)="listChanged($event)" [value]="userListType" class="w-36 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+            <option value="0">Not on my list</option>
+            <option value="1">Plan to play</option>
+            <option value="2">Playing</option>
+            <option value="3">Played</option>
+            <option value="4">On hold</option>
+            <option value="5">Dropped</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<app-toast></app-toast>
