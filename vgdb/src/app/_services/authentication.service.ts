@@ -8,7 +8,7 @@ import { UserForRegistrationDto } from '../_models/user/userForRegistrationDto.m
 import { StorageService } from '../_services/storage.service';
 import { EnvironmentUrlService } from './environment-url.service';
 
-const AUTH_URL = 'api/authenticate/';
+const API_URL = 'api/authenticate/';
 
 @Injectable({
   providedIn: 'root'
@@ -26,11 +26,11 @@ export class AuthenticationService {
   }
 
   public registerUser = (body: UserForRegistrationDto) => {
-    return this.http.post(this.createCompleteRoute(AUTH_URL + 'register', this.envUrl.urlAddress), body);
+    return this.http.post(this.createCompleteRoute(API_URL + 'register', this.envUrl.urlAddress), body);
   }
 
   public loginUser = (body: UserForAuthenticationDto) => {
-    return this.http.post<AuthResponseDto>(this.createCompleteRoute(AUTH_URL + 'login', this.envUrl.urlAddress), body);
+    return this.http.post<AuthResponseDto>(this.createCompleteRoute(API_URL + 'login', this.envUrl.urlAddress), body);
   }
 
   public sendAuthStateChangeNotification = (isAuthenticated: boolean) => {

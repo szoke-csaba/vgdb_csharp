@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { Game } from '../../_models/game/game.model';
 import { VoteStats } from '../../_models/game/voteStats.model';
@@ -26,7 +27,7 @@ export class GameSingleComponent implements OnInit {
   voteStats?: VoteStats;
 
   constructor(private gameService: GameService, private activatedRoute: ActivatedRoute, private authService: AuthenticationService,
-    private voteService: VoteService, private userListService: UserListService, private toastService: ToastService) {
+    private voteService: VoteService, private userListService: UserListService, private toastService: ToastService, private titleService: Title) {
     this.getUser();
   }
 
@@ -38,6 +39,7 @@ export class GameSingleComponent implements OnInit {
         this.gameService.get(paramId).subscribe(result => {
           this.loading = false;
           this.game = result.game;
+          this.titleService.setTitle(`${this.game.title} | vgdb`);
           this.userRating = result.userRating;
           this.userListType = result.userListType;
           this.voteStats = result.voteStats;

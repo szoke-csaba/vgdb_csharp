@@ -1,13 +1,13 @@
 import { Injectable } from "@angular/core";
 
-const defaultDuration = 2000;
+const DEFAULT_DURATION = 2000;
 
 @Injectable({
   providedIn: 'root'
 })
 
 export class ToastService {
-  public success(msg: string, duration: number = defaultDuration) {
+  public success(msg: string, duration: number = DEFAULT_DURATION) {
     const toastSuccess = document.getElementById('toast-success');
     const toastSuccessMsg = document.getElementById('toast-success-message');
 
@@ -22,7 +22,7 @@ export class ToastService {
     }, duration);
   }
 
-  public error(msg: string, duration: number = defaultDuration) {
+  public error(msg: string, duration: number = DEFAULT_DURATION) {
     const toastError = document.getElementById('toast-error');
     const toastErrorMsg = document.getElementById('toast-error-message');
 

@@ -4,7 +4,7 @@ import { GameAll } from "../_models/game/gameAll.model";
 import { GameSingle } from "../_models/game/gameSingle.model";
 import { EnvironmentUrlService } from "./environment-url.service";
 
-const MESSAGE_URL = 'api/game/';
+const API_URL = 'api/game/';
 
 @Injectable({
   providedIn: 'root'
@@ -26,11 +26,11 @@ export class GameService {
       params = params.append('page', page);
     }
 
-    return this.http.get<GameAll>(this.createCompleteRoute(MESSAGE_URL, this.envUrl.urlAddress), { params });
+    return this.http.get<GameAll>(this.createCompleteRoute(API_URL, this.envUrl.urlAddress), { params });
   }
 
   public get(id: number) {
-    return this.http.get<GameSingle>(this.createCompleteRoute(MESSAGE_URL + id, this.envUrl.urlAddress));
+    return this.http.get<GameSingle>(this.createCompleteRoute(API_URL + id, this.envUrl.urlAddress));
   }
 
   private createCompleteRoute = (route: string, envAddress: string) => {

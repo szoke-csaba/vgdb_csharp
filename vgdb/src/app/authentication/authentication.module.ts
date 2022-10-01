@@ -12,13 +12,13 @@ const childRoutes: Routes = [
   {
     path: 'register',
     component: RegisterUserComponent,
-    title: 'Register | vgdb',
+    title: 'Register',
     canActivate: [AnonymGuard]
   },
   {
     path: 'login',
     component: LoginComponent,
-    title: 'Login | vgdb',
+    title: 'Login',
     canActivate: [AnonymGuard]
   },
   {
