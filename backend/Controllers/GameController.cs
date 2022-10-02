@@ -1,6 +1,6 @@
 ﻿using backend.Data;
-using backend.Helpers;
 using backend.Models;
+using backend.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -11,19 +11,19 @@ namespace backend.Controllers;
 [Route("api/[controller]")]
 public class GameController : ControllerBase
 {
-    private const int _pageSize = 6;
-
     private readonly ApplicationDbContext _context;
+    private readonly IGameService _gameService;
 
-    public GameController(ApplicationDbContext context)
+    public GameController(ApplicationDbContext context, IGameService gameService)
     {
         _context = context;
+        _gameService = gameService;
     }
 
     [HttpGet]
-    public async Task<IActionResult> Index([FromQuery] GameFilterDto gameDTO)
+    public async Task<IActionResult> GetGames([FromQuery] GameFilterDto gameDto)
     {
-        if (_context.Games?.Count() == 0)
+        if (_gameService.GetGames()?.Count() == 0)
         {
             return StatusCode(
                 StatusCodes.Status404NotFound,
@@ -31,63 +31,18 @@ public class GameController : ControllerBase
             );
         }
 
-        var games = from g in _context.Games
-                    select g;
-
-        if (!string.IsNullOrEmpty(gameDTO.Search))
-        {
-            games = games.Where(game => game.Title.Contains(gameDTO.Search));
-        }
-
-        games = gameDTO.Sort switch
-        {
-            "oldest" => games.OrderBy(game => game.Id),
-            "titleAsc" => games.OrderBy(game => game.Title),
-            "titleDesc" => games.OrderByDescending(game => game.Title),
-            "releaseYearAsc" => games.OrderBy(game => game.ReleaseDate),
-            "releaseYearDesc" => games.OrderByDescending(game => game.ReleaseDate),
-            "avgRatingAsc" => games.OrderBy(game => game.Votes.Average(vote => vote.Rating)),
-            "avgRatingDesc" => games.OrderByDescending(game => game.Votes.Average(vote => vote.Rating)),
-            _ => games.OrderByDescending(game => game.Id),
-        };
-
-        var gameList = await PaginatedList<Game>.CreateAsync(games.AsNoTracking(), gameDTO.Page, _pageSize);
+        var gameList = await _gameService.GetGames(gameDto);
         var pagination = new PaginationDto(gameList.CurrentPage, gameList.TotalPages, gameList.PageSize, gameList.TotalCount,
                 gameList.PageItemsFrom, gameList.PageItemsTo, gameList.HasPrevious, gameList.HasNext, gameList.PreviousPage, gameList.NextPage);
 
-        var response = new Dictionary<string, object>()
-        {
-            { "games", gameList },
-            { "search", gameDTO.Search },
-            { "sort", gameDTO.Sort },
-            { "pagination", pagination },
-        };
-
-        return Ok(response);
+        return Ok(new GetGamesResponse(gameList, gameDto.Search, gameDto.Sort, pagination));
     }
 
     [HttpGet]
     [Route("{id}")]
-    public async Task<IActionResult> Details(int id)
+    public async Task<IActionResult> GetGame(int id)
     {
-        if (_context.Games == null)
-        {
-            return StatusCode(
-                StatusCodes.Status404NotFound,
-                new { Status = "Error", Message = "No game found." }
-            );
-        }
-
-        var game = await _context.Games
-            .Where(game => game.Id == id)
-            .Include(game => game.Tags)
-            .Include(game => game.Genres)
-            .Include(game => game.Platforms)
-            .Include(game => game.Developers)
-            .Include(game => game.Publishers)
-            .Include(game => game.Votes)
-            .Include(game => game.Lists)
-            .FirstOrDefaultAsync();
+        var game = await _gameService.GetGameById(id);
 
         if (game == null)
         {
@@ -97,17 +52,11 @@ public class GameController : ControllerBase
             );
         }
 
-        var ratings = new Dictionary<string, object>()
+        var voteStats = new VoteStatsDto(game.NumberOfVotesPerRating(), game.AverageRating(), game.MostVotesForARating());
+        var response = new GetGameResponse
         {
-            { "numberOfVotesPerRating", game.NumberOfVotesPerRating() },
-            { "averageRating", game.AverageRating() },
-            { "mostVotesForARating", game.MostVotesForARating() }
-        };
-
-        var response = new Dictionary<string, object>
-        {
-            { "game", game },
-            { "voteStats", ratings }
+            Game = game,
+            VoteStats = voteStats
         };
 
         var username = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -120,8 +69,8 @@ public class GameController : ControllerBase
                 .Include(user => user.Lists)
                 .FirstAsync();
 
-            response.Add("userRating", user.GameRating(id));
-            response.Add("userListType", user.GameUserListType(id));
+            response.UserRating = user.GameRating(id);
+            response.UserListType = user.GameUserListType(id);
         }
 
         return Ok(response);

@@ -1,5 +1,6 @@
 using backend.Data;
 using backend.Models;
+using backend.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -62,6 +63,9 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.WriteIndented = true;
 });
 builder.Services.AddEndpointsApiExplorer();
+
+// Services
+builder.Services.AddScoped<IGameService, GameService>();
 
 var app = builder.Build();
 
