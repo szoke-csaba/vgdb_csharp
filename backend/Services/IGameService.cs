@@ -1,4 +1,5 @@
-﻿using backend.Helpers;
+﻿using backend.Data.Dto;
+using backend.Helpers;
 using backend.Models;
 
 namespace backend.Services;

@@ -1,5 +1,5 @@
-﻿using backend.Models;
-using backend.Models.Auth;
+﻿using backend.Data.Dto.Auth;
+using backend.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;

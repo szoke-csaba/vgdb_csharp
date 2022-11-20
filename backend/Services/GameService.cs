@@ -1,24 +1,26 @@
-﻿using backend.Data;
+﻿using backend.Data.Dto;
 using backend.Helpers;
 using backend.Models;
+using backend.Repositories;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace backend.Services;
 
 public class GameService : IGameService
 {
-    private const int PageSize = 6;
+    private readonly int _pageSize;
+    private readonly IGameRepository _gameRepository;
 
-    private readonly ApplicationDbContext _context;
-
-    public GameService(ApplicationDbContext context)
+    public GameService(IGameRepository gameRepository, [FromServices] IConfiguration config)
     {
-        _context = context;
+        _gameRepository = gameRepository;
+        _pageSize = config.GetValue<int>("GamesPageSize");
     }
 
     public IQueryable<Game>? GetGames()
     {
-        return _context.Games;
+        return _gameRepository.GetGames();
     }
 
     public async Task<PaginatedList<Game>> GetGames(GameFilterDto gameDto)
@@ -43,20 +45,11 @@ public class GameService : IGameService
             _ => games.OrderByDescending(game => game.Id),
         };
 
-        return await PaginatedList<Game>.CreateAsync(games.AsNoTracking(), gameDto.Page, PageSize);
+        return await PaginatedList<Game>.CreateAsync(games.AsNoTracking(), gameDto.Page, _pageSize);
     }
 
     public async Task<Game?> GetGameById(int id)
     {
-        return await _context.Games
-            .Where(game => game.Id == id)
-            .Include(game => game.Tags)
-            .Include(game => game.Genres)
-            .Include(game => game.Platforms)
-            .Include(game => game.Developers)
-            .Include(game => game.Publishers)
-            .Include(game => game.Votes)
-            .Include(game => game.Lists)
-            .FirstOrDefaultAsync();
+        return await _gameRepository.GetGameById(id);
     }
 }

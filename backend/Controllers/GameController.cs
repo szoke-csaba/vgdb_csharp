@@ -1,8 +1,6 @@
-﻿using backend.Data;
-using backend.Models;
+﻿using backend.Data.Dto;
 using backend.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace backend.Controllers;
@@ -11,13 +9,13 @@ namespace backend.Controllers;
 [Route("api/[controller]")]
 public class GameController : ControllerBase
 {
-    private readonly ApplicationDbContext _context;
     private readonly IGameService _gameService;
+    private readonly IUserService _userService;
 
-    public GameController(ApplicationDbContext context, IGameService gameService)
+    public GameController(IGameService gameService, IUserService userService)
     {
-        _context = context;
         _gameService = gameService;
+        _userService = userService;
     }
 
     [HttpGet]
@@ -63,11 +61,7 @@ public class GameController : ControllerBase
 
         if (username != null)
         {
-            var user = await _context.Users
-                .Where(user => user.UserName == username)
-                .Include(user => user.Ratings)
-                .Include(user => user.Lists)
-                .FirstAsync();
+            var user = await _userService.GetUserByUsernameWithRatingsAndLists(username);
 
             response.UserRating = user.GameRating(id);
             response.UserListType = user.GameUserListType(id);

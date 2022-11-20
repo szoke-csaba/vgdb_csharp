@@ -1,4 +1,4 @@
-﻿namespace backend.Models.Auth;
+﻿namespace backend.Data.Dto.Auth;
 
 public class LoginResponse
 {

@@ -1,6 +1,7 @@
 ﻿using backend.Helpers;
+using backend.Models;
 
-namespace backend.Models;
+namespace backend.Data.Dto;
 
 public class GetGamesResponse
 {
