@@ -53,7 +53,7 @@ export class LoginComponent implements OnInit {
           this.storage.saveUserData(res);
           this.authService.setUserDataFromStorage();
           this.authService.sendAuthStateChangeNotification(true);
-          this.router.navigate(['/']);
+          this.router.navigate(['/user/profile']);
         },
         error: (err: HttpErrorResponse) => {
           this.loading = false;

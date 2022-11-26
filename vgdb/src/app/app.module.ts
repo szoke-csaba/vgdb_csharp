@@ -3,10 +3,12 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule, Routes, TitleStrategy } from '@angular/router';
 import { AppComponent } from './app.component';
+import { AuthGuard } from './authentication/auth.guard';
 import { NotFoundComponent } from './error-pages/not-found/not-found.component';
 import { GameComponent } from './game/game.component';
 import { GameSingleComponent } from './game/single/game-single.component';
 import { HomeComponent } from './home/home.component';
+import { UserProfileComponent } from './user/profile/profile.component';
 import { AuthInterceptorProviders } from './_helpers/auth.interceptor';
 import { CustomTitleStrategy } from './_helpers/custom-title-strategy';
 import { FooterComponent } from './_shared/footer/footer.component';
@@ -40,6 +42,20 @@ const routes: Routes = [
     ]
   },
   {
+    path: 'user',
+    children: [
+      {
+        path: 'profile',
+        component: UserProfileComponent,
+        canActivate: [AuthGuard],
+      },
+      {
+        path: 'profile/:id',
+        component: UserProfileComponent  
+      }
+    ]
+  },
+  {
     path: '404',
     title: '404 - Not Found',
     component: NotFoundComponent
@@ -60,7 +76,8 @@ const routes: Routes = [
     NotFoundComponent,
     ToastComponent,
     GameComponent,
-    GameSingleComponent
+    GameSingleComponent,
+    UserProfileComponent
   ],
   imports: [
     BrowserModule,
